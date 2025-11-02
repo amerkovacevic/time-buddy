@@ -27,20 +27,21 @@ a {
   display: none;
 }
 
-/* Time Slider Styles */
+/* Time Slider Styles - Using universal branding colors */
+/* Colors match shared-design-tokens.js: quaternary (#778DA9), accent (#E0E1DD) */
 .time-slider::-webkit-slider-thumb {
   appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #778DA9;
+  background: #778DA9; /* quaternary.500 - Silver Lake Blue */
   cursor: pointer;
-  border: 2px solid #E0E1DD;
+  border: 2px solid #E0E1DD; /* accent.50 - Platinum */
   transition: all 0.2s;
 }
 
 .time-slider::-webkit-slider-thumb:hover {
-  background: #E0E1DD;
+  background: #E0E1DD; /* accent.50 - Platinum */
   transform: scale(1.1);
 }
 
@@ -48,14 +49,14 @@ a {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #778DA9;
+  background: #778DA9; /* quaternary.500 - Silver Lake Blue */
   cursor: pointer;
-  border: 2px solid #E0E1DD;
+  border: 2px solid #E0E1DD; /* accent.50 - Platinum */
   transition: all 0.2s;
 }
 
 .time-slider::-moz-range-thumb:hover {
-  background: #E0E1DD;
+  background: #E0E1DD; /* accent.50 - Platinum */
   transform: scale(1.1);
 }
 

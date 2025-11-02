@@ -119,13 +119,14 @@ function TimeSlider({ selectedTime, currentTime, isFollowingCurrentTime, onTimeC
             value={hours}
             onChange={(e) => handleHoursChange(parseInt(e.target.value))}
             className="w-full h-2 bg-tertiary-800 rounded-lg appearance-none cursor-pointer time-slider"
-            style={{
-              background: `linear-gradient(to right, 
-                #415A77 0%, 
-                #415A77 ${(hours / 23) * 100}%, 
-                #1B263B ${(hours / 23) * 100}%, 
-                #1B263B 100%)`
-            }}
+                style={{
+                  // Using universal branding colors: tertiary (#415A77), secondary (#1B263B)
+                  background: `linear-gradient(to right,
+                rgb(65, 90, 119) 0%, 
+                rgb(65, 90, 119) ${(hours / 23) * 100}%, 
+                rgb(27, 38, 59) ${(hours / 23) * 100}%, 
+                rgb(27, 38, 59) 100%)`
+                }}
           />
           <div className="flex justify-between text-xs text-quaternary-500 mt-1">
             <span>12 AM</span>
@@ -149,13 +150,14 @@ function TimeSlider({ selectedTime, currentTime, isFollowingCurrentTime, onTimeC
             value={minutes}
             onChange={(e) => handleMinutesChange(parseInt(e.target.value))}
             className="w-full h-2 bg-tertiary-800 rounded-lg appearance-none cursor-pointer time-slider"
-            style={{
-              background: `linear-gradient(to right, 
-                #415A77 0%, 
-                #415A77 ${(minutes / 59) * 100}%, 
-                #1B263B ${(minutes / 59) * 100}%, 
-                #1B263B 100%)`
-            }}
+                style={{
+                  // Using universal branding colors: tertiary (#415A77), secondary (#1B263B)
+                  background: `linear-gradient(to right,
+                rgb(65, 90, 119) 0%, 
+                rgb(65, 90, 119) ${(minutes / 59) * 100}%, 
+                rgb(27, 38, 59) ${(minutes / 59) * 100}%, 
+                rgb(27, 38, 59) 100%)`
+                }}
           />
           <div className="flex justify-between text-xs text-quaternary-500 mt-1">
             <span>0</span>
