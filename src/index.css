@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Smooth scrolling for slider */
+.slider-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Time Slider Styles */
+.time-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #778DA9;
+  cursor: pointer;
+  border: 2px solid #E0E1DD;
+  transition: all 0.2s;
+}
+
+.time-slider::-webkit-slider-thumb:hover {
+  background: #E0E1DD;
+  transform: scale(1.1);
+}
+
+.time-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #778DA9;
+  cursor: pointer;
+  border: 2px solid #E0E1DD;
+  transition: all 0.2s;
+}
+
+.time-slider::-moz-range-thumb:hover {
+  background: #E0E1DD;
+  transform: scale(1.1);
+}
+
