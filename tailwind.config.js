@@ -8,8 +8,8 @@ export default {
     './src/**/*.{js,jsx}',
   ],
   theme: {
+    fontFamily: tailwindFonts,
     extend: {
-      fontFamily: tailwindFonts,
       colors: tailwindColors,
     },
   },
