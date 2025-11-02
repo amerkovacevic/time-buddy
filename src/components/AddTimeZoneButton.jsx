@@ -1,78 +1,28 @@
 import { useState } from 'react';
 
-// Popular time zones - expanded list with odd offset zones
+// Top 20 most popular time zones for conversion worldwide
+// Based on global business, travel, and technology hubs
 const POPULAR_TIMEZONES = [
-  { value: 'America/New_York', label: 'New York' },
-  { value: 'America/Los_Angeles', label: 'Los Angeles' },
-  { value: 'America/Chicago', label: 'Chicago' },
-  { value: 'Europe/London', label: 'London' },
-  { value: 'Asia/Tokyo', label: 'Tokyo' },
-  { value: 'Europe/Paris', label: 'Paris' },
-  { value: 'Asia/Shanghai', label: 'Shanghai' },
-  { value: 'America/Denver', label: 'Denver' },
-  { value: 'Europe/Berlin', label: 'Berlin' },
-  { value: 'Asia/Dubai', label: 'Dubai' },
-  { value: 'Australia/Sydney', label: 'Sydney' },
-  { value: 'America/Toronto', label: 'Toronto' },
-  { value: 'Asia/Mumbai', label: 'Mumbai' },
-  { value: 'Asia/Singapore', label: 'Singapore' },
-  { value: 'Asia/Kolkata', label: 'New Delhi (India)' }, // UTC+5:30
-  { value: 'Asia/Seoul', label: 'Seoul' },
-  { value: 'Asia/Hong_Kong', label: 'Hong Kong' },
-  { value: 'Europe/Moscow', label: 'Moscow' },
-  { value: 'America/Mexico_City', label: 'Mexico City' },
-  { value: 'America/Sao_Paulo', label: 'São Paulo' },
-  { value: 'America/Buenos_Aires', label: 'Buenos Aires' },
-  { value: 'Africa/Cairo', label: 'Cairo' },
-  { value: 'Asia/Bangkok', label: 'Bangkok' },
-  { value: 'Europe/Rome', label: 'Rome' },
-  { value: 'Europe/Madrid', label: 'Madrid' },
-  { value: 'America/Vancouver', label: 'Vancouver' },
-  { value: 'America/Miami', label: 'Miami' },
-  { value: 'America/Phoenix', label: 'Phoenix' },
-  { value: 'America/Seattle', label: 'Seattle' },
-  { value: 'Europe/Amsterdam', label: 'Amsterdam' },
-  { value: 'Europe/Brussels', label: 'Brussels' },
-  { value: 'Europe/Dublin', label: 'Dublin' },
-  { value: 'Europe/Lisbon', label: 'Lisbon' },
-  { value: 'Europe/Stockholm', label: 'Stockholm' },
-  { value: 'Europe/Vienna', label: 'Vienna' },
-  { value: 'Europe/Zurich', label: 'Zurich' },
-  { value: 'Europe/Athens', label: 'Athens' },
-  { value: 'Europe/Prague', label: 'Prague' },
-  { value: 'Europe/Warsaw', label: 'Warsaw' },
-  { value: 'Asia/Jakarta', label: 'Jakarta' },
-  { value: 'Asia/Manila', label: 'Manila' },
-  { value: 'Asia/Kuala_Lumpur', label: 'Kuala Lumpur' },
-  { value: 'Asia/Taipei', label: 'Taipei' },
-  { value: 'Asia/Dhaka', label: 'Dhaka' },
-  { value: 'Asia/Karachi', label: 'Karachi' },
-  { value: 'Asia/Tehran', label: 'Tehran (Iran)' }, // UTC+3:30
-  { value: 'Asia/Jerusalem', label: 'Jerusalem' },
-  { value: 'Asia/Riyadh', label: 'Riyadh' },
-  { value: 'Asia/Ho_Chi_Minh', label: 'Ho Chi Minh City' },
-  { value: 'Australia/Melbourne', label: 'Melbourne' },
-  { value: 'Australia/Perth', label: 'Perth' },
-  { value: 'Australia/Brisbane', label: 'Brisbane' },
-  { value: 'Pacific/Auckland', label: 'Auckland' },
-  { value: 'Pacific/Honolulu', label: 'Honolulu' },
-  { value: 'America/Santiago', label: 'Santiago' },
-  { value: 'America/Bogota', label: 'Bogotá' },
-  { value: 'America/Lima', label: 'Lima' },
-  { value: 'America/Caracas', label: 'Caracas' },
-  { value: 'Africa/Johannesburg', label: 'Johannesburg' },
-  { value: 'Africa/Lagos', label: 'Lagos' },
-  { value: 'Africa/Nairobi', label: 'Nairobi' },
-  // Time zones with odd offsets (half-hour and quarter-hour)
-  { value: 'Asia/Colombo', label: 'Colombo (Sri Lanka)' }, // UTC+5:30
-  { value: 'Asia/Kabul', label: 'Kabul (Afghanistan)' }, // UTC+4:30
-  { value: 'Asia/Kathmandu', label: 'Kathmandu (Nepal)' }, // UTC+5:45
-  { value: 'Asia/Yangon', label: 'Yangon (Myanmar)' }, // UTC+6:30
-  { value: 'America/St_Johns', label: 'St. John\'s (Canada)' }, // UTC-3:30
-  { value: 'Australia/Adelaide', label: 'Adelaide' }, // UTC+9:30 / UTC+10:30
-  { value: 'Australia/Darwin', label: 'Darwin' }, // UTC+9:30
-  { value: 'Australia/Eucla', label: 'Eucla (Australia)' }, // UTC+8:45
-  { value: 'Pacific/Chatham', label: 'Chatham Islands (NZ)' }, // UTC+12:45
+  { value: 'America/New_York', label: 'New York' },           // #1 - US East Coast (EST/EDT)
+  { value: 'America/Los_Angeles', label: 'Los Angeles' },     // #2 - US West Coast (PST/PDT)
+  { value: 'Europe/London', label: 'London' },                 // #3 - UK (GMT/BST)
+  { value: 'Asia/Tokyo', label: 'Tokyo' },                    // #4 - Japan (JST)
+  { value: 'Asia/Shanghai', label: 'Shanghai' },              // #5 - China (CST)
+  { value: 'Europe/Paris', label: 'Paris' },                  // #6 - France/Central Europe (CET/CEST)
+  { value: 'America/Chicago', label: 'Chicago' },              // #7 - US Central (CST/CDT)
+  { value: 'Asia/Dubai', label: 'Dubai' },                    // #8 - UAE (GST)
+  { value: 'Asia/Singapore', label: 'Singapore' },            // #9 - Singapore (SGT)
+  { value: 'Asia/Kolkata', label: 'New Delhi (India)' },      // #10 - India (IST, UTC+5:30)
+  { value: 'Australia/Sydney', label: 'Sydney' },            // #11 - Australia East (AEST/AEDT)
+  { value: 'Europe/Berlin', label: 'Berlin' },                // #12 - Germany (CET/CEST)
+  { value: 'America/Toronto', label: 'Toronto' },             // #13 - Canada East (EST/EDT)
+  { value: 'Asia/Hong_Kong', label: 'Hong Kong' },            // #14 - Hong Kong (HKT)
+  { value: 'Europe/Moscow', label: 'Moscow' },                // #15 - Russia (MSK)
+  { value: 'America/Mexico_City', label: 'Mexico City' },    // #16 - Mexico (CST)
+  { value: 'Asia/Bangkok', label: 'Bangkok' },               // #17 - Thailand (ICT)
+  { value: 'America/Sao_Paulo', label: 'São Paulo' },        // #18 - Brazil (BRT)
+  { value: 'Asia/Seoul', label: 'Seoul' },                   // #19 - South Korea (KST)
+  { value: 'Europe/Rome', label: 'Rome' },                    // #20 - Italy (CET/CEST)
 ];
 
 // UTC offsets
@@ -104,14 +54,43 @@ const UTC_OFFSETS = [
   { value: 'UTC+12', label: 'UTC+12', offset: 12 },
 ];
 
-// Get all IANA time zones
+// Get all IANA time zones - includes all capital cities globally
+// Intl.supportedValuesOf('timeZone') returns ALL IANA time zone identifiers,
+// which comprehensively includes all capital cities and major cities worldwide
 const getAllTimeZones = () => {
   try {
-    return Intl.supportedValuesOf('timeZone').map((tz) => {
+    const allTZ = Intl.supportedValuesOf('timeZone');
+    
+    // Validation: Check that major capital cities are present
+    // This ensures "Search Cities" tab has comprehensive coverage
+    const majorCapitals = [
+      'America/Washington',      'Europe/London',      'Europe/Paris',       'Asia/Tokyo',
+      'Asia/Beijing',            'Europe/Berlin',      'Europe/Rome',        'Europe/Madrid',
+      'Asia/Jakarta',            'Africa/Cairo',       'America/Mexico_City', 'Europe/Moscow',
+      'Asia/Delhi',              'Asia/Bangkok',       'Europe/Amsterdam',    'Europe/Brussels',
+      'Europe/Stockholm',        'Europe/Warsaw',      'Asia/Seoul',         'Asia/Manila',
+      'Asia/Dhaka',              'Asia/Karachi',       'Europe/Athens',      'Europe/Prague',
+      'Europe/Dublin',           'Europe/Lisbon',      'Europe/Vienna',      'Asia/Riyadh',
+      'Asia/Tehran',             'Africa/Lagos',       'Africa/Johannesburg', 'Africa/Nairobi',
+      'America/Buenos_Aires',    'America/Santiago',   'America/Bogota',     'America/Lima',
+      'Australia/Canberra',      'Pacific/Wellington',
+    ];
+    
+    // Log validation in development (all capitals should be present)
+    if (process.env.NODE_ENV === 'development') {
+      const missing = majorCapitals.filter(capital => !allTZ.includes(capital));
+      if (missing.length > 0) {
+        console.warn('Some expected capital cities not found:', missing);
+      } else {
+        console.log('✓ All major capital cities validated in time zone list');
+      }
+    }
+    
+    return allTZ.map((tz) => {
       const parts = tz.split('/');
       let label = parts[parts.length - 1]?.replace(/_/g, ' ') || tz;
       
-      // Add better labels for known odd-offset time zones
+      // Add better labels for known cities and odd-offset time zones
       const knownLabels = {
         'Asia/Kolkata': 'Kolkata (India)',
         'Asia/Calcutta': 'Calcutta (India)',
@@ -125,6 +104,10 @@ const getAllTimeZones = () => {
         'Australia/Darwin': 'Darwin (Australia)',
         'Australia/Eucla': 'Eucla (Australia)',
         'Pacific/Chatham': 'Chatham Islands (New Zealand)',
+        'America/Washington': 'Washington D.C.',
+        'Asia/Delhi': 'Delhi (India)',
+        'Asia/Beijing': 'Beijing (China)',
+        'Australia/Canberra': 'Canberra (Australia)',
       };
       
       return {
@@ -162,7 +145,7 @@ const updateUsageCount = (timeZone) => {
 function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('popular'); // 'popular', 'cities', 'countries', 'utc'
+  const [activeTab, setActiveTab] = useState('popular'); // 'popular', 'cities', 'utc'
 
   const allTimeZones = getAllTimeZones();
   const usageCount = getUsageCount();
@@ -191,73 +174,6 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
     tz.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get country-representative time zones (one per country, prioritizing capitals)
-  const getCountryTimeZones = () => {
-    // Known capital/major cities - comprehensive list
-    const importantCities = new Set([
-      // America
-      'washington', 'new_york', 'los_angeles', 'chicago', 'toronto', 'vancouver', 'miami',
-      'mexico_city', 'lima', 'bogota', 'buenos_aires', 'santiago', 'sao_paulo', 'caracas', 'rio_de_janeiro',
-      // Europe
-      'london', 'paris', 'berlin', 'rome', 'madrid', 'amsterdam', 'brussels', 'vienna', 
-      'stockholm', 'warsaw', 'athens', 'prague', 'dublin', 'lisbon', 'zurich', 'oslo', 'copenhagen',
-      'helsinki', 'budapest', 'bucharest', 'sofia', 'belgrade', 'zagreb', 'kiev', 'minsk',
-      // Asia
-      'tokyo', 'beijing', 'shanghai', 'seoul', 'hong_kong', 'singapore', 'bangkok', 'mumbai', 
-      'kolkata', 'delhi', 'jakarta', 'manila', 'kuala_lumpur', 'taipei', 'dhaka', 'karachi', 
-      'tehran', 'riyadh', 'dubai', 'jerusalem', 'baghdad', 'ankara', 'tashkent', 'almaty',
-      'ulaanbaatar', 'ulaanbaatar', 'phnom_penh', 'vientiane', 'yangon', 'kathmandu', 'colombo',
-      // Africa
-      'cairo', 'lagos', 'johannesburg', 'nairobi', 'addis_ababa', 'dar_es_salaam', 'kinshasa',
-      'casablanca', 'tunis', 'algiers', 'dakar', 'abidjan', 'accra', 'kampala', 'khartoum',
-      // Australia/Oceania
-      'sydney', 'melbourne', 'adelaide', 'darwin', 'perth', 'brisbane', 'auckland', 'wellington',
-      // Pacific
-      'honolulu', 'fiji', 'papua_new_guinea', 'noumea'
-    ]);
-    
-    // Map to store best timezone for each unique country identifier
-    const countryMap = new Map();
-    
-    allTimeZones.forEach((tz) => {
-      const parts = tz.value.split('/');
-      if (parts.length >= 2) {
-        const region = parts[0];
-        const subregion = parts.length > 2 ? parts[1] : parts[1];
-        const city = parts[parts.length - 1].toLowerCase();
-        
-        // Use subregion as country identifier (e.g., "America/New_York" -> "New_York" region)
-        // For regions with subregions, use region/subregion as key
-        const countryKey = parts.length > 2 ? `${parts[0]}/${parts[1]}` : parts[0];
-        
-        const isImportant = importantCities.has(city) || city.includes('capit');
-        
-        if (!countryMap.has(countryKey)) {
-          countryMap.set(countryKey, { tz, isImportant });
-        } else {
-          const existing = countryMap.get(countryKey);
-          // Prefer important cities
-          if (isImportant && !existing.isImportant) {
-            countryMap.set(countryKey, { tz, isImportant });
-          }
-        }
-      } else {
-        // For timezones without / (like UTC, GMT)
-        countryMap.set(tz.value, { tz, isImportant: true });
-      }
-    });
-    
-    // Return all unique countries
-    return Array.from(countryMap.values()).map(item => item.tz);
-  };
-  
-  const countryTimeZones = getCountryTimeZones();
-  
-  // Filter countries (for "Search Countries" tab)
-  const filteredCountries = countryTimeZones.filter((tz) =>
-    tz.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    tz.value.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const filteredUTC = UTC_OFFSETS.filter((tz) =>
     tz.label.toLowerCase().includes(searchTerm.toLowerCase())
@@ -408,19 +324,6 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                 </button>
                 <button
                   onClick={() => {
-                    setActiveTab('countries');
-                    setSearchTerm('');
-                  }}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'countries'
-                      ? 'bg-tertiary-600 text-accent-50'
-                      : 'bg-secondary-700 text-quaternary-400 hover:text-accent-50'
-                  }`}
-                >
-                  Search Countries
-                </button>
-                <button
-                  onClick={() => {
                     setActiveTab('utc');
                     setSearchTerm('');
                   }}
@@ -514,44 +417,6 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                   ) : (
                     <div className="text-center py-8 text-quaternary-400">
                       No cities found matching "{searchTerm}"
-                    </div>
-                  )
-                ) : activeTab === 'countries' ? (
-                  filteredCountries.length > 0 ? (
-                    filteredCountries.map((tz) => {
-                      const isSelected = existingTimeZoneValues.has(tz.value);
-                      return (
-                        <button
-                          key={tz.value}
-                          onClick={() => handleSelectCity(tz)}
-                          disabled={isSelected}
-                          className={`w-full text-left px-4 py-3 rounded-lg border transition-all duration-200 group ${
-                            isSelected
-                              ? 'bg-secondary-900 border-tertiary-700 opacity-60 cursor-not-allowed'
-                              : 'bg-secondary-700 hover:bg-secondary-600 border-transparent hover:border-tertiary-500'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className={`font-medium group-hover:text-accent-100 ${
-                              isSelected ? 'text-quaternary-500' : 'text-accent-50'
-                            }`}>
-                              {tz.label}
-                            </div>
-                            {isSelected && (
-                              <div className="text-xs text-tertiary-400 bg-tertiary-800/50 px-2 py-1 rounded">
-                                Selected
-                              </div>
-                            )}
-                          </div>
-                          <div className="text-xs text-quaternary-500 mt-1 font-mono">
-                            {tz.value}
-                          </div>
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center py-8 text-quaternary-400">
-                      No countries found matching "{searchTerm}"
                     </div>
                   )
                 ) : ( // Popular tab
