@@ -162,7 +162,7 @@ const updateUsageCount = (timeZone) => {
 function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('popular'); // 'popular', 'cities', 'utc', 'all'
+  const [activeTab, setActiveTab] = useState('popular'); // 'popular', 'cities', 'countries', 'utc'
 
   const allTimeZones = getAllTimeZones();
   const usageCount = getUsageCount();
@@ -187,6 +187,74 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
 
   // Filter all cities (for city search tab)
   const filteredAllCities = allTimeZones.filter((tz) =>
+    tz.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    tz.value.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Get country-representative time zones (one per country, prioritizing capitals)
+  const getCountryTimeZones = () => {
+    // Known capital/major cities - comprehensive list
+    const importantCities = new Set([
+      // America
+      'washington', 'new_york', 'los_angeles', 'chicago', 'toronto', 'vancouver', 'miami',
+      'mexico_city', 'lima', 'bogota', 'buenos_aires', 'santiago', 'sao_paulo', 'caracas', 'rio_de_janeiro',
+      // Europe
+      'london', 'paris', 'berlin', 'rome', 'madrid', 'amsterdam', 'brussels', 'vienna', 
+      'stockholm', 'warsaw', 'athens', 'prague', 'dublin', 'lisbon', 'zurich', 'oslo', 'copenhagen',
+      'helsinki', 'budapest', 'bucharest', 'sofia', 'belgrade', 'zagreb', 'kiev', 'minsk',
+      // Asia
+      'tokyo', 'beijing', 'shanghai', 'seoul', 'hong_kong', 'singapore', 'bangkok', 'mumbai', 
+      'kolkata', 'delhi', 'jakarta', 'manila', 'kuala_lumpur', 'taipei', 'dhaka', 'karachi', 
+      'tehran', 'riyadh', 'dubai', 'jerusalem', 'baghdad', 'ankara', 'tashkent', 'almaty',
+      'ulaanbaatar', 'ulaanbaatar', 'phnom_penh', 'vientiane', 'yangon', 'kathmandu', 'colombo',
+      // Africa
+      'cairo', 'lagos', 'johannesburg', 'nairobi', 'addis_ababa', 'dar_es_salaam', 'kinshasa',
+      'casablanca', 'tunis', 'algiers', 'dakar', 'abidjan', 'accra', 'kampala', 'khartoum',
+      // Australia/Oceania
+      'sydney', 'melbourne', 'adelaide', 'darwin', 'perth', 'brisbane', 'auckland', 'wellington',
+      // Pacific
+      'honolulu', 'fiji', 'papua_new_guinea', 'noumea'
+    ]);
+    
+    // Map to store best timezone for each unique country identifier
+    const countryMap = new Map();
+    
+    allTimeZones.forEach((tz) => {
+      const parts = tz.value.split('/');
+      if (parts.length >= 2) {
+        const region = parts[0];
+        const subregion = parts.length > 2 ? parts[1] : parts[1];
+        const city = parts[parts.length - 1].toLowerCase();
+        
+        // Use subregion as country identifier (e.g., "America/New_York" -> "New_York" region)
+        // For regions with subregions, use region/subregion as key
+        const countryKey = parts.length > 2 ? `${parts[0]}/${parts[1]}` : parts[0];
+        
+        const isImportant = importantCities.has(city) || city.includes('capit');
+        
+        if (!countryMap.has(countryKey)) {
+          countryMap.set(countryKey, { tz, isImportant });
+        } else {
+          const existing = countryMap.get(countryKey);
+          // Prefer important cities
+          if (isImportant && !existing.isImportant) {
+            countryMap.set(countryKey, { tz, isImportant });
+          }
+        }
+      } else {
+        // For timezones without / (like UTC, GMT)
+        countryMap.set(tz.value, { tz, isImportant: true });
+      }
+    });
+    
+    // Return all unique countries
+    return Array.from(countryMap.values()).map(item => item.tz);
+  };
+  
+  const countryTimeZones = getCountryTimeZones();
+  
+  // Filter countries (for "Search Countries" tab)
+  const filteredCountries = countryTimeZones.filter((tz) =>
     tz.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tz.value.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -250,10 +318,10 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
         <div
           className="fixed inset-0 bg-primary-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => {
-            setIsOpen(false);
-            setSearchTerm('');
-            setActiveTab('cities');
-          }}
+                    setIsOpen(false);
+                    setSearchTerm('');
+                    setActiveTab('popular');
+                  }}
         >
           <div
             className="bg-secondary-800 rounded-xl border border-tertiary-600 shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col"
@@ -340,6 +408,19 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                 </button>
                 <button
                   onClick={() => {
+                    setActiveTab('countries');
+                    setSearchTerm('');
+                  }}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === 'countries'
+                      ? 'bg-tertiary-600 text-accent-50'
+                      : 'bg-secondary-700 text-quaternary-400 hover:text-accent-50'
+                  }`}
+                >
+                  Search Countries
+                </button>
+                <button
+                  onClick={() => {
                     setActiveTab('utc');
                     setSearchTerm('');
                   }}
@@ -350,19 +431,6 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                   }`}
                 >
                   UTC Offsets
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveTab('all');
-                    setSearchTerm('');
-                  }}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeTab === 'all'
-                      ? 'bg-tertiary-600 text-accent-50'
-                      : 'bg-secondary-700 text-quaternary-400 hover:text-accent-50'
-                  }`}
-                >
-                  All ({allTimeZones.length})
                 </button>
               </div>
             </div>
@@ -448,9 +516,9 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                       No cities found matching "{searchTerm}"
                     </div>
                   )
-                ) : activeTab === 'all' ? (
-                  filteredAllCities.length > 0 ? (
-                    filteredAllCities.map((tz) => {
+                ) : activeTab === 'countries' ? (
+                  filteredCountries.length > 0 ? (
+                    filteredCountries.map((tz) => {
                       const isSelected = existingTimeZoneValues.has(tz.value);
                       return (
                         <button
@@ -483,7 +551,7 @@ function AddTimeZoneButton({ onAdd, existingTimeZones = [] }) {
                     })
                   ) : (
                     <div className="text-center py-8 text-quaternary-400">
-                      No time zones found matching "{searchTerm}"
+                      No countries found matching "{searchTerm}"
                     </div>
                   )
                 ) : ( // Popular tab
